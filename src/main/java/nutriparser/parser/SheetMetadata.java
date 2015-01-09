@@ -21,6 +21,7 @@ public final class SheetMetadata {
 
 	public static final Map<Vitamin, Integer> CELLS_INDEXES_VITAMINS = mapFromIndexes(VITAMINES, VITAMINES_OFFSET);
 	public static final Map<Mineral, Integer> CELLS_INDEXES_MINERALS = mapFromIndexes(MINERALS, MINERALS_OFFSET);
+	static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
 
 	private SheetMetadata() {
 	}

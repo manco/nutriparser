@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 //TODO test z kontekstem springa
 //TODO unit testy dla productCell, Row
+//TODO użycie nutriparsera jako zależności w nutriva-webapp
+
 @Component
 public class ProductDtoFactory {
 	

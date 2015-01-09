@@ -22,8 +22,6 @@ import static java.util.stream.StreamSupport.stream;
 @Component
 public class XlsxProductDao {
 
-	private static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
-
 	private final ProductDtoFactory productDtoFactory;
 
 	@Autowired
@@ -33,7 +31,7 @@ public class XlsxProductDao {
 
 	public Collection<ProductDto> extractProducts(final File file) throws IOException, InvalidFormatException {
 		final Workbook workbook = createWorkbook(file);
-		final Sheet productsSheet = workbook.getSheet(PRODUKTY_SHEET_NAME);
+		final Sheet productsSheet = workbook.getSheet(SheetMetadata.PRODUKTY_SHEET_NAME);
 		return extractProducts(productsSheet);
 	}
 
