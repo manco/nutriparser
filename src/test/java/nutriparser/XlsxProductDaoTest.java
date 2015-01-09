@@ -1,5 +1,6 @@
 package nutriparser;
 
+import nutriparser.parser.XlsxProductDao;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 

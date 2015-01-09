@@ -1,6 +1,5 @@
-package nutriparser.domain;
+package nutriparser.dto;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 public class ProductDto {

@@ -1,22 +1,27 @@
-package nutriparser;
+package nutriparser.parser;
 
 import com.google.common.annotations.VisibleForTesting;
-import nutriparser.domain.ProductDto;
-import nutriparser.util.CellUtils;
+import nutriparser.dto.ProductDto;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.stream.Stream;
+
+import static com.codepoetics.protonpack.StreamUtils.takeUntil;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
 @Component
 public class XlsxProductDao {
 
-	private static final int CELL_END_PRODUCTS = -1;
 	@VisibleForTesting static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
 
 	private final XlsxRowProcessor rowProcessor;
@@ -33,22 +38,16 @@ public class XlsxProductDao {
 	}
 
 	private Collection<ProductDto> extractProducts(final Iterable<Row> productsSheet) {
-		final Collection<ProductDto> products = new LinkedList<>();
-		for (final Row row: productsSheet) {
-			if (isEndRow(row)) {
-				return products;
-			}
-			if (rowProcessor.isRowValid(row)) {
-				final ProductDto p = rowProcessor.processRow(row);
-				products.add(p);
-			}
-		}
-		return products;
+		return
+			takeUntil(productRowStream(productsSheet), ProductRow::isEndRow)
+			.filter(ProductRow::isValid)
+			.map(rowProcessor::processRow)
+			.collect(toList())
+			;
 	}
 
-	private static boolean isEndRow(final Row row) {
-		final Cell cell = CellUtils.getCell(row, InputXlsxMetaData.CELL_INDEX_PRODUCT_NUMBER);
-		return CellUtils.isCellNumeric(cell) && Math.abs(cell.getNumericCellValue() - CELL_END_PRODUCTS) < 0.1;
+	private static Stream<ProductRow> productRowStream(Iterable<Row> rows) {
+		return stream(rows.spliterator(), false).map(ProductRow::new);
 	}
 
 	@VisibleForTesting static Workbook createWorkbook(File file) {
