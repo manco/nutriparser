@@ -3,9 +3,7 @@ package nutriparser.parser;
 import com.google.common.collect.Maps;
 import nutriparser.dto.Mineral;
 import nutriparser.dto.Vitamin;
-import nutriparser.util.CellUtils;
 import nutriparser.util.MapsUtils;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Map;
@@ -18,22 +16,21 @@ public class ProductRow {
 
     private static final int CELL_INDEX_NAME = 3;
     private static final int CELL_INDEX_PRODUCT_NUMBER = 2;
-    private static final double CELL_END_PRODUCTS = -1.0;
 
-    private final Optional<Cell> nameCell;
-    private final Optional<Cell> numberCell;
-    private final Map<Vitamin, Optional<Cell>> vitaminesCells;
-    private final Map<Mineral, Optional<Cell>> mineralsCells;
+    private final ProductCell nameCell;
+    private final ProductCell numberCell;
+    private final Map<Vitamin, ProductCell> vitaminesCells;
+    private final Map<Mineral, ProductCell> mineralsCells;
 
     public ProductRow(final Row row) {
-        numberCell = CellUtils.getCellMaybe(row, CELL_INDEX_PRODUCT_NUMBER);
-        nameCell = CellUtils.getCellMaybe(row, CELL_INDEX_NAME);
+        numberCell = getProductCell(row, CELL_INDEX_PRODUCT_NUMBER);
+        nameCell = getProductCell(row, CELL_INDEX_NAME);
         vitaminesCells = MapsUtils.toMap(VITAMINES, cellsFromIndexes(row, CELLS_INDEXES_VITAMINS));
         mineralsCells = MapsUtils.toMap(MINERALS, cellsFromIndexes(row, CELLS_INDEXES_MINERALS));
     }
 
     public String getName() {
-        return CellUtils.getStringValueOrNull(nameCell);
+        return nameCell.getStringValueOrNull();
     }
 
     public Map<Vitamin, Double> getVitaminesValues() {
@@ -49,19 +46,23 @@ public class ProductRow {
     }
 
     public boolean isEndRow() {
-        return isNumberCellValid() && Math.abs(CellUtils.getNumericValueOrZero(numberCell) - CELL_END_PRODUCTS) < 0.1;
+        return isNumberCellValid() && numberCell.isEndCell();
     }
 
     private boolean isNumberCellValid() {
-        return numberCell.map(CellUtils::isNumeric).orElse(false);
+        return numberCell.isNumeric();
     }
 
-    private static <T> Function<T, Optional<Cell>> cellsFromIndexes(final Row row, final Map<T, Integer> indexesMap) {
-        return element -> CellUtils.getCellMaybe(row, indexesMap.get(element));
+    private static <T> Function<T, ProductCell> cellsFromIndexes(final Row row, final Map<T, Integer> indexesMap) {
+        return element -> getProductCell(row, indexesMap.get(element));
     }
 
-    private static <T> Map<T, Double> valuesFromCells(Map<T, Optional<Cell>> cells) {
-        return Maps.transformValues(cells, CellUtils::getNumericValueOrZero);
+    private static <T> Map<T, Double> valuesFromCells(Map<T, ProductCell> cells) {
+        return Maps.transformValues(cells, ProductCell::getNumericValueOrZero);
+    }
+
+    private static ProductCell getProductCell(final Row row, int index) {
+        return new ProductCell(Optional.ofNullable(row.getCell(index, Row.RETURN_BLANK_AS_NULL)));
     }
 
 }

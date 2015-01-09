@@ -22,16 +22,16 @@ import static java.util.stream.StreamSupport.stream;
 @Component
 public class XlsxProductDao {
 
-	@VisibleForTesting static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
+	private static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
 
-	private final XlsxRowProcessor rowProcessor;
+	private final ProductDtoFactory productDtoFactory;
 
 	@Autowired
-	public XlsxProductDao(XlsxRowProcessor rowProcessor) {
-		this.rowProcessor = rowProcessor;
+	public XlsxProductDao(ProductDtoFactory productDtoFactory) {
+		this.productDtoFactory = productDtoFactory;
 	}
 
-	public Collection<ProductDto> extractProducts(final File file) {
+	public Collection<ProductDto> extractProducts(final File file) throws IOException, InvalidFormatException {
 		final Workbook workbook = createWorkbook(file);
 		final Sheet productsSheet = workbook.getSheet(PRODUKTY_SHEET_NAME);
 		return extractProducts(productsSheet);
@@ -41,7 +41,7 @@ public class XlsxProductDao {
 		return
 			takeUntil(productRowStream(productsSheet), ProductRow::isEndRow)
 			.filter(ProductRow::isValid)
-			.map(rowProcessor::processRow)
+			.map(productDtoFactory::processRow)
 			.collect(toList())
 			;
 	}
@@ -50,11 +50,7 @@ public class XlsxProductDao {
 		return stream(rows.spliterator(), false).map(ProductRow::new);
 	}
 
-	@VisibleForTesting static Workbook createWorkbook(File file) {
-		try {
-			return WorkbookFactory.create(file);
-		} catch (final IOException | InvalidFormatException e) {
-			throw new RuntimeException(e);
-		}
+	@VisibleForTesting static Workbook createWorkbook(File file) throws IOException, InvalidFormatException {
+		return WorkbookFactory.create(file);
 	}
 }
