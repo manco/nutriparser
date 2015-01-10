@@ -1,9 +1,8 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 

@@ -1,4 +1,4 @@
-package nutriparser.util;
+package pl.nutrivia.nutriparser.util;
 
 import java.util.Collection;
 import java.util.Map;

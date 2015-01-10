@@ -1,7 +1,7 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
 import com.google.common.annotations.VisibleForTesting;
-import nutriparser.dto.ProductDto;
+import pl.nutrivia.nutriparser.dto.ProductDto;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;

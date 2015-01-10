@@ -1,4 +1,4 @@
-package nutriparser.dto;
+package pl.nutrivia.nutriparser.dto;
 
 import java.util.Arrays;
 

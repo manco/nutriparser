@@ -1,15 +1,15 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import nutriparser.dto.Mineral;
-import nutriparser.dto.Vitamin;
+import pl.nutrivia.nutriparser.dto.Mineral;
+import pl.nutrivia.nutriparser.dto.Vitamin;
 
 import java.util.List;
 import java.util.Map;
 
-import static nutriparser.dto.Mineral.*;
-import static nutriparser.dto.Vitamin.*;
+import static pl.nutrivia.nutriparser.dto.Mineral.*;
+import static pl.nutrivia.nutriparser.dto.Vitamin.*;
 
 public final class SheetMetadata {
 

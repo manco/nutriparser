@@ -1,4 +1,4 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
 import org.apache.poi.ss.usermodel.Cell;
 

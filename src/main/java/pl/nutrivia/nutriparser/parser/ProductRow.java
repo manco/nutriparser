@@ -1,17 +1,17 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import nutriparser.dto.Mineral;
-import nutriparser.dto.Vitamin;
-import nutriparser.util.MapsUtils;
+import pl.nutrivia.nutriparser.dto.Mineral;
+import pl.nutrivia.nutriparser.dto.Vitamin;
+import pl.nutrivia.nutriparser.util.MapsUtils;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static nutriparser.parser.SheetMetadata.*;
+import static pl.nutrivia.nutriparser.parser.SheetMetadata.*;
 
 public class ProductRow {
 

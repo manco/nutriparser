@@ -1,6 +1,6 @@
-package nutriparser.parser;
+package pl.nutrivia.nutriparser.parser;
 
-import nutriparser.dto.ProductDto;
+import pl.nutrivia.nutriparser.dto.ProductDto;
 import org.springframework.stereotype.Component;
 
 //TODO użycie nutriparsera jako zależności w nutriva-webapp
