@@ -1,5 +1,6 @@
 package nutriparser.parser;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import nutriparser.dto.Mineral;
 import nutriparser.dto.Vitamin;
@@ -14,8 +15,8 @@ import static nutriparser.parser.SheetMetadata.*;
 
 public class ProductRow {
 
-    private static final int CELL_INDEX_NAME = 3;
-    private static final int CELL_INDEX_PRODUCT_NUMBER = 2;
+    @VisibleForTesting static final int CELL_INDEX_NAME = 3;
+    @VisibleForTesting static final int CELL_INDEX_PRODUCT_NUMBER = 2;
 
     private final ProductCell nameCell;
     private final ProductCell numberCell;
@@ -30,7 +31,7 @@ public class ProductRow {
     }
 
     public String getName() {
-        return nameCell.getStringValueOrNull();
+        return nameCell.getStringValueOrEmpty();
     }
 
     public Map<Vitamin, Double> getVitaminesValues() {

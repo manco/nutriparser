@@ -20,26 +20,27 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
 @Component
-public class XlsxProductDao {
+public class WorkbookParser {
 
 	private final ProductDtoFactory productDtoFactory;
 
 	@Autowired
-	public XlsxProductDao(ProductDtoFactory productDtoFactory) {
+	public WorkbookParser(ProductDtoFactory productDtoFactory) {
 		this.productDtoFactory = productDtoFactory;
 	}
 
 	public Collection<ProductDto> extractProducts(final File file) throws IOException, InvalidFormatException {
-		final Workbook workbook = createWorkbook(file);
-		final Sheet productsSheet = workbook.getSheet(SheetMetadata.PRODUKTY_SHEET_NAME);
-		return extractProducts(productsSheet);
+		try (final Workbook workbook = createWorkbook(file)) {
+			final Sheet productsSheet = workbook.getSheet(SheetMetadata.PRODUKTY_SHEET_NAME);
+			return extractProducts(productsSheet);
+		}
 	}
 
 	private Collection<ProductDto> extractProducts(final Iterable<Row> productsSheet) {
 		return
 			takeUntil(productRowStream(productsSheet), ProductRow::isEndRow)
 			.filter(ProductRow::isValid)
-			.map(productDtoFactory::processRow)
+			.map(productDtoFactory::fromRow)
 			.collect(toList())
 			;
 	}

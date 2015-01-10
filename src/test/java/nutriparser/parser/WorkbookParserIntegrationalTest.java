@@ -1,9 +1,17 @@
 package nutriparser.parser;
 
+import com.google.common.base.Strings;
 import nutriparser.dto.Mineral;
 import nutriparser.dto.ProductDto;
 import nutriparser.dto.Vitamin;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.util.Collection;
@@ -12,10 +20,14 @@ import java.util.Optional;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 
-public class XlsxProductDaoIntegrationalTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = WorkbookParserIntegrationalTest.class)
+@Configuration
+@ComponentScan(basePackageClasses = WorkbookParser.class)
+public class WorkbookParserIntegrationalTest {
 
 	public static final double INVALID_VALUE = Double.MAX_VALUE;
-	private final XlsxProductDao dao = new XlsxProductDao(new ProductDtoFactory());
+	@Autowired private WorkbookParser parser;
 
 	private final File file = inputFile();
 
@@ -24,9 +36,9 @@ public class XlsxProductDaoIntegrationalTest {
 		//given
 
 		//when
-		final Collection<ProductDto> products = dao.extractProducts(file);
-
+		final Collection<ProductDto> products = parser.extractProducts(file);
 		//then
+		assertThat(products).hasSize(1022);
 		assertThat(findKurczak(products).isPresent()).isTrue();
 	}
 
@@ -35,7 +47,7 @@ public class XlsxProductDaoIntegrationalTest {
 		//given
 
 		//when
-		final Collection<ProductDto> products = dao.extractProducts(file);
+		final Collection<ProductDto> products = parser.extractProducts(file);
 
 		//then
 		final Optional<ProductDto> kurczak = findKurczak(products);
@@ -48,21 +60,22 @@ public class XlsxProductDaoIntegrationalTest {
 		//given
 
 		//when
-		final Collection<ProductDto> products = dao.extractProducts(file);
+		final Collection<ProductDto> products = parser.extractProducts(file);
 
 		//then
 		assertThat(findKurczak(products).map(p -> p.getVitamin(Vitamin.B2)).orElse(INVALID_VALUE)).isEqualTo(0.15);
 	}
 
 	private static Optional<ProductDto> findKurczak(Collection<ProductDto> products) {
-		return products.stream().filter(XlsxProductDaoIntegrationalTest::isNameKurczak).findAny();
+		return products.stream().filter(WorkbookParserIntegrationalTest::isNameKurczak).findAny();
 	}
 
 	private static boolean isNameKurczak(ProductDto p) {
-		return "Mięso z piersi indyka bez skóry".equals(p.getName());
+		return "Mięso z piersi indyka bez skóry".equalsIgnoreCase(Strings.nullToEmpty(p.getName()).trim());
 	}
 
 	private File inputFile() {
 		return new File(getClass().getResource("/Posilki-v4.91.xls").getFile());
 	}
+
 }

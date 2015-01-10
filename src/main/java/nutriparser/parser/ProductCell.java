@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class ProductCell {
 
-    private static final double CELL_END_PRODUCTS = -1.0;
+    private static final double CELL_END_PRODUCTS = Double.valueOf(SheetMetadata.CELL_END_PRODUCTS);
 
     private final Optional<Cell> cell;
 
@@ -15,11 +15,11 @@ public class ProductCell {
         this.cell = Objects.requireNonNull(cell);
     }
 
-    public String getStringValueOrNull() {
-        return cell.map(Cell::getStringCellValue).orElse(null);
+    public String getStringValueOrEmpty() {
+        return cell.map(Cell::getStringCellValue).orElse("");
     }
 
-    public Double getNumericValueOrZero() {
+    public double getNumericValueOrZero() {
         return cell.map(Cell::getNumericCellValue).orElse(0.0);
     }
 
@@ -28,7 +28,7 @@ public class ProductCell {
     }
 
     public boolean isEndCell() {
-        return Math.abs(getNumericValueOrZero() - CELL_END_PRODUCTS) < 0.1;
+        return Math.abs(CELL_END_PRODUCTS - getNumericValueOrZero()) < 0.0001;
     }
 
     private static boolean isTypeNumeric(Cell cell) {
