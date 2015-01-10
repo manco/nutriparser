@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,10 +20,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = WorkbookParserIntegrationalTest.class)
+@ContextConfiguration(classes = WorkbookParserLongTest.class)
 @Configuration
 @ComponentScan(basePackageClasses = WorkbookParser.class)
-public class WorkbookParserIntegrationalTest {
+public class WorkbookParserLongTest {
 
 	public static final double INVALID_VALUE = Double.MAX_VALUE;
 	@Autowired private WorkbookParser parser;
@@ -67,7 +66,7 @@ public class WorkbookParserIntegrationalTest {
 	}
 
 	private static Optional<ProductDto> findKurczak(Collection<ProductDto> products) {
-		return products.stream().filter(WorkbookParserIntegrationalTest::isNameKurczak).findAny();
+		return products.stream().filter(WorkbookParserLongTest::isNameKurczak).findAny();
 	}
 
 	private static boolean isNameKurczak(ProductDto p) {

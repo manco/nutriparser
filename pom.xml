@@ -13,6 +13,7 @@
         <java.version>1.8</java.version>
         <surefire.plugin.version>2.18.1</surefire.plugin.version>
         <file.encoding>UTF-8</file.encoding>
+        <long.test.pattern>**/*LongTest.java</long.test.pattern>
     </properties>
 
     <repositories>
@@ -64,7 +65,7 @@
                         <version>${surefire.plugin.version}</version>
                         <configuration>
                             <excludes>
-                                <exclude>**/*IntegrationalTest.java</exclude>
+                                <exclude>${long.test.pattern}</exclude>
                             </excludes>
                         </configuration>
                     </plugin>
@@ -74,7 +75,7 @@
 
 
         <profile>
-            <id>memoryExpensive</id>
+            <id>longTest</id>
             <build>
                 <plugins>
                     <plugin>
@@ -84,7 +85,7 @@
                         <configuration>
                             <argLine>-Xms128m -Xmx2048m</argLine>
                             <includes>
-                                <include>**/*IntegrationalTest.java</include>
+                                <include>${long.test.pattern}</include>
                             </includes>
                         </configuration>
                     </plugin>
