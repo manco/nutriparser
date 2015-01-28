@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -23,19 +24,16 @@ public class ProductRowTest {
     @Mock private Cell nameCell;
     @Mock private Cell numberCell;
 
-    @Mock private Collection<NameWithIndex> vitamines;
-    @Mock private Collection<NameWithIndex> minerals;
-
     @Test
     public void shouldIsValid() {
-
+    
         //given
         given(numberCell.getCellType()).willReturn(Cell.CELL_TYPE_NUMERIC);
         given(row.getCell(eq(ProductSheet.CELL_INDEX_NAME), any(Row.MissingCellPolicy.class))).willReturn(nameCell);
         given(row.getCell(eq(ProductSheet.CELL_INDEX_PRODUCT_NUMBER), any(Row.MissingCellPolicy.class))).willReturn(numberCell);
 
         //when
-        final boolean result = new ProductRow(row, vitamines, minerals).isValid();
+        final boolean result = new ProductRow(row, Collections.emptyList(), Collections.emptyList()).isValid();
 
         //then
         assertThat(result).isTrue();

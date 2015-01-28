@@ -66,7 +66,6 @@
             </build>
         </profile>
 
-
         <profile>
             <id>longTest</id>
             <build>
@@ -88,6 +87,12 @@
     </profiles>
 
     <dependencies>
+
+        <dependency>
+            <groupId>pl.nutrivia</groupId>
+            <artifactId>nutriparser-api</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>

@@ -1,8 +1,8 @@
 package pl.nutrivia.nutriparser.parser;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import pl.nutrivia.nutriparser.api.InvalidFormatException;
 import pl.nutrivia.nutriparser.api.ProductDto;
 import pl.nutrivia.nutriparser.api.WorkbookParser;
 
@@ -20,6 +20,8 @@ public class WorkbookParserImpl implements WorkbookParser {
 	public Collection<ProductDto> extractProducts(final File file) throws IOException, InvalidFormatException {
 		try (final Workbook workbook = WorkbookFactory.create(file)) {
 			return extractProducts(workbook);
+		} catch (final org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+			throw new InvalidFormatException(e);
 		}
 	}
 
@@ -27,6 +29,8 @@ public class WorkbookParserImpl implements WorkbookParser {
 	public Collection<ProductDto> extractProducts(final InputStream inputStream) throws IOException, InvalidFormatException {
 		try (final Workbook workbook = WorkbookFactory.create(inputStream)) {
 			return extractProducts(workbook);
+		} catch (final org.apache.poi.openxml4j.exceptions.InvalidFormatException e) {
+			throw new InvalidFormatException(e);
 		}
 	}
 
