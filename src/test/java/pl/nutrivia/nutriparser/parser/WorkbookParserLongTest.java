@@ -1,32 +1,20 @@
 package pl.nutrivia.nutriparser.parser;
 
 import com.google.common.base.Strings;
-import pl.nutrivia.nutriparser.dto.Mineral;
-import pl.nutrivia.nutriparser.dto.ProductDto;
-import pl.nutrivia.nutriparser.dto.Vitamin;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import pl.nutrivia.nutriparser.dto.ProductDto;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = WorkbookParserLongTest.class)
-@Configuration
-@ComponentScan(basePackageClasses = WorkbookParser.class)
 public class WorkbookParserLongTest {
 
-	public static final double INVALID_VALUE = Double.MAX_VALUE;
-	@Autowired private WorkbookParser parser;
+	public static final BigDecimal INVALID_VALUE = BigDecimal.valueOf(999999999999L);
+	private final WorkbookParser parser = new WorkbookParser();
 
 	private final File file = inputFile();
 
@@ -50,8 +38,8 @@ public class WorkbookParserLongTest {
 
 		//then
 		final Optional<ProductDto> kurczak = findKurczak(products);
-		assertThat(kurczak.map(p -> p.getMineral(Mineral.Fe)).orElse(INVALID_VALUE)).isEqualTo(0.5);
-		assertThat(kurczak.map(p -> p.getMineral(Mineral.Na)).orElse(INVALID_VALUE)).isEqualTo(47.0);
+		assertThat(kurczak.map(p -> p.getMinerals().get("Żelazo")).orElse(INVALID_VALUE)).isEqualTo(BigDecimal.valueOf(0.5));
+		assertThat(kurczak.map(p -> p.getMinerals().get("Sód")).orElse(INVALID_VALUE)).isEqualTo(BigDecimal.valueOf(47));
 	}
 
 	@Test
@@ -62,7 +50,7 @@ public class WorkbookParserLongTest {
 		final Collection<ProductDto> products = parser.extractProducts(file);
 
 		//then
-		assertThat(findKurczak(products).map(p -> p.getVitamin(Vitamin.B2)).orElse(INVALID_VALUE)).isEqualTo(0.15);
+		assertThat(findKurczak(products).map(p -> p.getVitamines().get("B2")).orElse(INVALID_VALUE)).isEqualTo(BigDecimal.valueOf(0.15));
 	}
 
 	private static Optional<ProductDto> findKurczak(Collection<ProductDto> products) {

@@ -1,31 +1,30 @@
 package pl.nutrivia.nutriparser.dto;
 
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
-public class ProductDto {
-	private final String name;
-	private final Map<Vitamin, Double> vitamines;
-	private final Map<Mineral, Double> minerals;
+//TODO wydzielić do modułu przed implementacją integracji z http://www.opennutritiondatabase.com/
+public interface ProductDto {
+    String getName();
 
-	public ProductDto(String name, Map<Vitamin, Double> vitamines, Map<Mineral, Double> minerals) {
-		this.name = name;
-		this.vitamines = vitamines;
-		this.minerals = minerals;
-	}
+    BigDecimal getProtein();
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	public Double getVitamin(Vitamin vit) {
-		return vitamines.get(vit);
-	}
-	public Double getMineral(Mineral mineral) {
-		return minerals.get(mineral);
-	}
+    BigDecimal getFat();
 
+    BigDecimal getCarbo();
+
+    Optional<BigDecimal> getFatSaturated();
+
+    Optional<BigDecimal> getFatMonoUnsaturated();
+
+    Optional<BigDecimal> getFatPolyUnsaturated();
+
+    Optional<BigDecimal> getCholesterol();
+
+    Optional<BigDecimal> getFiber();
+
+    Map<String, BigDecimal> getVitamines();
+
+    Map<String, BigDecimal> getMinerals();
 }

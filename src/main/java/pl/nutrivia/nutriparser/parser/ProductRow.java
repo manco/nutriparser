@@ -1,44 +1,95 @@
 package pl.nutrivia.nutriparser.parser;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import pl.nutrivia.nutriparser.dto.Mineral;
-import pl.nutrivia.nutriparser.dto.Vitamin;
-import pl.nutrivia.nutriparser.util.MapsUtils;
 import org.apache.poi.ss.usermodel.Row;
+import pl.nutrivia.nutriparser.dto.ProductDto;
 
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static pl.nutrivia.nutriparser.parser.SheetMetadata.*;
 
-public class ProductRow {
-
-    @VisibleForTesting static final int CELL_INDEX_NAME = 3;
-    @VisibleForTesting static final int CELL_INDEX_PRODUCT_NUMBER = 2;
+public class ProductRow implements ProductDto {
 
     private final ProductCell nameCell;
     private final ProductCell numberCell;
-    private final Map<Vitamin, ProductCell> vitaminesCells;
-    private final Map<Mineral, ProductCell> mineralsCells;
+    private final Row row;
+    private final Map<String, ProductCell> vitaminesCells;
+    private final Map<String, ProductCell> mineralsCells;
 
-    public ProductRow(final Row row) {
-        numberCell = getProductCell(row, CELL_INDEX_PRODUCT_NUMBER);
+    public ProductRow(final Row row, final SheetMetadata metaData) {
         nameCell = getProductCell(row, CELL_INDEX_NAME);
-        vitaminesCells = MapsUtils.toMap(VITAMINES, cellsFromIndexes(row, CELLS_INDEXES_VITAMINS));
-        mineralsCells = MapsUtils.toMap(MINERALS, cellsFromIndexes(row, CELLS_INDEXES_MINERALS));
+        numberCell = getProductCell(row, CELL_INDEX_PRODUCT_NUMBER);
+        this.row = row;
+
+        vitaminesCells = nameWithCellFrom(row, metaData.getVitaminesNames());
+        mineralsCells =  nameWithCellFrom(row, metaData.getMineralsNames());
     }
 
+    private static Map<String, ProductCell> nameWithCellFrom(Row row, Collection<NameWithIndex> names) {
+        return names.stream().collect(
+                Collectors.toMap(
+                    NameWithIndex::getName,
+                    nameWithIndex -> getProductCell(row, nameWithIndex.getIndex())
+                )
+        );
+    }
+
+    @Override
     public String getName() {
         return nameCell.getStringValueOrEmpty();
     }
 
-    public Map<Vitamin, Double> getVitaminesValues() {
+    @Override
+    public BigDecimal getProtein() {
+        return getCellNumberValue(CELL_INDEX_PROTEIN);
+    }
+
+    @Override
+    public BigDecimal getFat() {
+        return getCellNumberValue(CELL_INDEX_FAT);
+    }
+
+    @Override
+    public BigDecimal getCarbo() {
+        return getCellNumberValue(CELL_INDEX_CARBO);
+    }
+
+    @Override
+    public Optional<BigDecimal> getFatSaturated() {
+        return getCellNumberValueMaybe(CELL_INDEX_FAT_SATURATED);
+    }
+
+    @Override
+    public Optional<BigDecimal> getFatMonoUnsaturated() {
+        return getCellNumberValueMaybe(CELL_INDEX_FAT_MONO_UNSATURATED);
+    }
+
+    @Override
+    public Optional<BigDecimal> getFatPolyUnsaturated() {
+        return getCellNumberValueMaybe(CELL_INDEX_FAT_POLY_UNSATURATED);
+    }
+
+    @Override
+    public Optional<BigDecimal> getCholesterol() {
+        return getCellNumberValueMaybe(CELL_INDEX_CHOLESTEROL);
+    }
+
+    @Override
+    public Optional<BigDecimal> getFiber() {
+        return getCellNumberValueMaybe(CELL_INDEX_FIBER);
+    }
+
+    @Override
+    public Map<String, BigDecimal> getVitamines() {
         return valuesFromCells(vitaminesCells);
     }
 
-    public Map<Mineral, Double> getMineralsValues() {
+    @Override
+    public Map<String, BigDecimal> getMinerals() {
         return valuesFromCells(mineralsCells);
     }
 
@@ -54,12 +105,16 @@ public class ProductRow {
         return numberCell.isNumeric();
     }
 
-    private static <T> Function<T, ProductCell> cellsFromIndexes(final Row row, final Map<T, Integer> indexesMap) {
-        return element -> getProductCell(row, indexesMap.get(element));
+    private static Map<String, BigDecimal> valuesFromCells(Map<String, ProductCell> cells) {
+        return Maps.transformValues(cells, ProductCell::getNumericValueOrZero);
     }
 
-    private static <T> Map<T, Double> valuesFromCells(Map<T, ProductCell> cells) {
-        return Maps.transformValues(cells, ProductCell::getNumericValueOrZero);
+    private Optional<BigDecimal> getCellNumberValueMaybe(int index) {
+        return Optional.ofNullable(getCellNumberValue(index));
+    }
+
+    private BigDecimal getCellNumberValue(int index) {
+        return getProductCell(row, index).getNumericValueOrZero();
     }
 
     private static ProductCell getProductCell(final Row row, int index) {

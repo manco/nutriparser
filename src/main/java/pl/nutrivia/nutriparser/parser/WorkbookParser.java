@@ -1,14 +1,13 @@
 package pl.nutrivia.nutriparser.parser;
 
-import com.google.common.annotations.VisibleForTesting;
-import pl.nutrivia.nutriparser.dto.ProductDto;
+import com.google.common.collect.Iterables;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.nutrivia.nutriparser.dto.ProductDto;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,34 +21,24 @@ import static java.util.stream.StreamSupport.stream;
 @Component
 public class WorkbookParser {
 
-	private final ProductDtoFactory productDtoFactory;
-
-	@Autowired
-	public WorkbookParser(ProductDtoFactory productDtoFactory) {
-		this.productDtoFactory = productDtoFactory;
-	}
-
 	public Collection<ProductDto> extractProducts(final File file) throws IOException, InvalidFormatException {
-		try (final Workbook workbook = createWorkbook(file)) {
+		try (final Workbook workbook = WorkbookFactory.create(file)) {
 			final Sheet productsSheet = workbook.getSheet(SheetMetadata.PRODUKTY_SHEET_NAME);
 			return extractProducts(productsSheet);
 		}
 	}
 
-	private Collection<ProductDto> extractProducts(final Iterable<Row> productsSheet) {
+	private static Collection<ProductDto> extractProducts(final Sheet productsSheet) {
 		return
 			takeUntil(productRowStream(productsSheet), ProductRow::isEndRow)
 			.filter(ProductRow::isValid)
-			.map(productDtoFactory::fromRow)
 			.collect(toList())
 			;
 	}
 
-	private static Stream<ProductRow> productRowStream(Iterable<Row> rows) {
-		return stream(rows.spliterator(), false).map(ProductRow::new);
+	private static Stream<ProductRow> productRowStream(Sheet sheet) {
+		final SheetMetadata metaData = new SheetMetadata(sheet);
+		return stream(sheet.spliterator(), false).map(row -> new ProductRow(row, metaData));
 	}
 
-	@VisibleForTesting static Workbook createWorkbook(File file) throws IOException, InvalidFormatException {
-		return WorkbookFactory.create(file);
-	}
 }

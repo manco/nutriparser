@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -35,10 +36,10 @@ public class ProductCellTest {
         given(cell.getNumericCellValue()).willReturn(numValue);
 
         //when
-        final double result = new ProductCell(Optional.of(cell)).getNumericValueOrZero();
+        final BigDecimal result = new ProductCell(Optional.of(cell)).getNumericValueOrZero();
 
         //then
-        assertThat(result).isEqualTo(numValue);
+        assertThat(result.doubleValue()).isEqualTo(numValue);
 
     }
 
@@ -57,7 +58,7 @@ public class ProductCellTest {
     @Test
     public void shouldBeEndCell() {
         //given
-        given(cell.getNumericCellValue()).willReturn(Double.valueOf(SheetMetadata.CELL_END_PRODUCTS));
+        given(cell.getNumericCellValue()).willReturn((double) SheetMetadata.CELL_END_PRODUCTS);
 
         //when
         final boolean result = new ProductCell(Optional.of(cell)).isEndCell();
@@ -77,7 +78,7 @@ public class ProductCellTest {
         assertThat(missingCell.isNumeric()).isFalse();
         assertThat(missingCell.isEndCell()).isFalse();
         assertThat(missingCell.isPresent()).isFalse();
-        assertThat(missingCell.getNumericValueOrZero()).isEqualTo(0.0);
+        assertThat(missingCell.getNumericValueOrZero()).isEqualTo(BigDecimal.ZERO);
         assertThat(missingCell.getStringValueOrEmpty()).isEmpty();
     }
 

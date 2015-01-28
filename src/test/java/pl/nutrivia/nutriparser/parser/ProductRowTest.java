@@ -11,6 +11,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductRowTest {
@@ -24,11 +25,11 @@ public class ProductRowTest {
 
         //given
         given(numberCell.getCellType()).willReturn(Cell.CELL_TYPE_NUMERIC);
-        given(row.getCell(eq(ProductRow.CELL_INDEX_NAME), any(Row.MissingCellPolicy.class))).willReturn(nameCell);
-        given(row.getCell(eq(ProductRow.CELL_INDEX_PRODUCT_NUMBER), any(Row.MissingCellPolicy.class))).willReturn(numberCell);
+        given(row.getCell(eq(SheetMetadata.CELL_INDEX_NAME), any(Row.MissingCellPolicy.class))).willReturn(nameCell);
+        given(row.getCell(eq(SheetMetadata.CELL_INDEX_PRODUCT_NUMBER), any(Row.MissingCellPolicy.class))).willReturn(numberCell);
 
         //when
-        final boolean result = new ProductRow(row).isValid();
+        final boolean result = new ProductRow(row, mock(SheetMetadata.class)).isValid();
 
         //then
         assertThat(result).isTrue();

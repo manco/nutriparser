@@ -2,12 +2,13 @@ package pl.nutrivia.nutriparser.parser;
 
 import org.apache.poi.ss.usermodel.Cell;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Optional;
 
 public class ProductCell {
 
-    private static final double CELL_END_PRODUCTS = Double.valueOf(SheetMetadata.CELL_END_PRODUCTS);
+    private static final BigDecimal CELL_END_PRODUCTS = BigDecimal.valueOf(SheetMetadata.CELL_END_PRODUCTS);
 
     private final Optional<Cell> cell;
 
@@ -19,8 +20,8 @@ public class ProductCell {
         return cell.map(Cell::getStringCellValue).orElse("");
     }
 
-    public double getNumericValueOrZero() {
-        return cell.map(Cell::getNumericCellValue).orElse(0.0);
+    public BigDecimal getNumericValueOrZero() {
+        return cell.map(Cell::getNumericCellValue).map(BigDecimal::valueOf).orElse(BigDecimal.ZERO);
     }
 
     public boolean isNumeric() {
@@ -28,7 +29,7 @@ public class ProductCell {
     }
 
     public boolean isEndCell() {
-        return Math.abs(CELL_END_PRODUCTS - getNumericValueOrZero()) < 0.0001;
+        return CELL_END_PRODUCTS.compareTo(getNumericValueOrZero()) == 0;
     }
 
     private static boolean isTypeNumeric(Cell cell) {
