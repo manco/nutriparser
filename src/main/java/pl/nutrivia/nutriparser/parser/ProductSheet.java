@@ -5,16 +5,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 
-public class SheetMetadata {
+public class ProductSheet {
 
 	static final int CELL_INDEX_NAME = 3;
 	static final int CELL_INDEX_PRODUCT_NUMBER = 2;
@@ -24,13 +25,13 @@ public class SheetMetadata {
 	static final int CELL_INDEX_FAT_SATURATED = 12;
 	static final int CELL_INDEX_FAT_MONO_UNSATURATED = 13;
 	static final int CELL_INDEX_FAT_POLY_UNSATURATED = 14;
-
 	static final int CELL_INDEX_CHOLESTEROL = 15;
 	static final int CELL_INDEX_FIBER = 16;
-	static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
 
 	private static final int VITAMINES_OFFSET = 31;
 	private static final int MINERALS_OFFSET = 22;
+
+	private static final String PRODUKTY_SHEET_NAME = "PRODUKTY";
 
 	private static final int VITAMINES_EXPECTED_AMOUNT = 10;
 	private static final int MINERALS_EXPECTED_AMOUNT = VITAMINES_OFFSET - MINERALS_OFFSET;
@@ -41,14 +42,21 @@ public class SheetMetadata {
 
 	private final List<NameWithIndex> mineralsNames;
 	private final List<NameWithIndex> vitaminesNames;
+	private final Iterable<Row> sheet;
 
-	public SheetMetadata(Sheet sheet) {
+	public ProductSheet(Workbook workbook) {
+		sheet = workbook.getSheet(PRODUKTY_SHEET_NAME);
+
 		final Row headerRow = Iterables.get(sheet, ROW_INDEX_HEADER);
 		mineralsNames = getNamesFrom(headerRow, mineralsIndexes());
 		vitaminesNames = getNamesFrom(headerRow, vitaminesIndexes());
 
 		checkSize(mineralsNames, MINERALS_EXPECTED_AMOUNT);
 		checkSize(vitaminesNames, VITAMINES_EXPECTED_AMOUNT);
+	}
+
+	public Stream<ProductRow> productRowStream() {
+		return stream(sheet.spliterator(), false).map(row -> new ProductRow(row, vitaminesNames, mineralsNames));
 	}
 
 	private static void checkSize(Collection<?> collection, int expected) {
@@ -64,19 +72,11 @@ public class SheetMetadata {
 		return IntStream.range(VITAMINES_OFFSET, VITAMINES_OFFSET + VITAMINES_EXPECTED_AMOUNT);
 	}
 
-	public List<NameWithIndex> getMineralsNames() {
-		return Collections.unmodifiableList(mineralsNames);
-	}
-
-	public List<NameWithIndex> getVitaminesNames() {
-		return Collections.unmodifiableList(vitaminesNames);
-	}
-
 	private static List<NameWithIndex> getNamesFrom(Row row, IntStream stream) {
 		return stream
 				.mapToObj(row::getCell)
-				.filter(SheetMetadata::hasText)
-				.map(SheetMetadata::nameWithIndex)
+				.filter(ProductSheet::hasText)
+				.map(ProductSheet::nameWithIndex)
 				.collect(toList());
 	}
 

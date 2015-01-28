@@ -1,4 +1,4 @@
-package pl.nutrivia.nutriparser.dto;
+package pl.nutrivia.nutriparser.api;
 
 import java.math.BigDecimal;
 import java.util.Map;

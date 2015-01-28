@@ -2,7 +2,7 @@ package pl.nutrivia.nutriparser.parser;
 
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
-import pl.nutrivia.nutriparser.dto.ProductDto;
+import pl.nutrivia.nutriparser.api.ProductDto;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pl.nutrivia.nutriparser.parser.SheetMetadata.*;
+import static pl.nutrivia.nutriparser.parser.ProductSheet.*;
 
 public class ProductRow implements ProductDto {
 
@@ -20,13 +20,13 @@ public class ProductRow implements ProductDto {
     private final Map<String, ProductCell> vitaminesCells;
     private final Map<String, ProductCell> mineralsCells;
 
-    public ProductRow(final Row row, final SheetMetadata metaData) {
+    public ProductRow(final Row row, final Collection<NameWithIndex> vitaminNames, Collection<NameWithIndex> mineralsNames) {
         nameCell = getProductCell(row, CELL_INDEX_NAME);
         numberCell = getProductCell(row, CELL_INDEX_PRODUCT_NUMBER);
         this.row = row;
 
-        vitaminesCells = nameWithCellFrom(row, metaData.getVitaminesNames());
-        mineralsCells =  nameWithCellFrom(row, metaData.getMineralsNames());
+        vitaminesCells = nameWithCellFrom(row, vitaminNames);
+        mineralsCells =  nameWithCellFrom(row, mineralsNames);
     }
 
     private static Map<String, ProductCell> nameWithCellFrom(Row row, Collection<NameWithIndex> names) {

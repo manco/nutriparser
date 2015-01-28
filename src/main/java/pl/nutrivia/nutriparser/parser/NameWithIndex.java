@@ -1,6 +1,6 @@
 package pl.nutrivia.nutriparser.parser;
 
-public class NameWithIndex {
+public final class NameWithIndex {
     private final String name;
     private final int index;
 

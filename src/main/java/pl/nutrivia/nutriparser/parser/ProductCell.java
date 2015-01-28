@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class ProductCell {
 
-    private static final BigDecimal CELL_END_PRODUCTS = BigDecimal.valueOf(SheetMetadata.CELL_END_PRODUCTS);
+    private static final BigDecimal CELL_END_PRODUCTS = BigDecimal.valueOf(ProductSheet.CELL_END_PRODUCTS);
 
     private final Optional<Cell> cell;
 

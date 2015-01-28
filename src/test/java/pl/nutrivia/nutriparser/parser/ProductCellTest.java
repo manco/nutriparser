@@ -58,7 +58,7 @@ public class ProductCellTest {
     @Test
     public void shouldBeEndCell() {
         //given
-        given(cell.getNumericCellValue()).willReturn((double) SheetMetadata.CELL_END_PRODUCTS);
+        given(cell.getNumericCellValue()).willReturn((double) ProductSheet.CELL_END_PRODUCTS);
 
         //when
         final boolean result = new ProductCell(Optional.of(cell)).isEndCell();
