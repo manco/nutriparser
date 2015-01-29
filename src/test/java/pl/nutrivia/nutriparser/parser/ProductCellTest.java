@@ -9,7 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,7 +78,7 @@ public class ProductCellTest {
         assertThat(missingCell.isNumeric()).isFalse();
         assertThat(missingCell.isEndCell()).isFalse();
         assertThat(missingCell.isPresent()).isFalse();
-        assertThat(missingCell.getNumericValueOrZero()).isEqualTo(BigDecimal.ZERO);
+        assertThat(missingCell.getNumericValueOrZero()).isZero();
         assertThat(missingCell.getStringValueOrEmpty()).isEmpty();
     }
 

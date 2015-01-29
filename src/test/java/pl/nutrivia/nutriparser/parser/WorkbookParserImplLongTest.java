@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.assertj.core.api.Fail.fail;
 
-//TODO zmigrowac z festa na assertj
 public class WorkbookParserImplLongTest {
 
 	private final WorkbookParser parser = new WorkbookParserImpl();
@@ -39,9 +39,9 @@ public class WorkbookParserImplLongTest {
 		assertThatValueEquals(kurczak.getFatSaturated(), 0.2);
 		assertThatValueEquals(kurczak.getFatMonoUnsaturated(), 0.3);
 		assertThatValueEquals(kurczak.getFatPolyUnsaturated(), 0.2);
-		assertThatValueEquals(kurczak.getMinerals().get("Żelazo"), 0.5);
-		assertThatValueEquals(kurczak.getMinerals().get("Sód"), 47.0);
-		assertThatValueEquals(kurczak.getVitamines().get("B2"), 0.15);
+		assertThat(kurczak.getMinerals()).contains(entry("Żelazo", 0.5));
+		assertThat(kurczak.getMinerals()).contains(entry("Sód", 47.0));
+		assertThat(kurczak.getMinerals()).contains(entry("B2", 0.15));
 	}
 
 	private static void assertThatValueEquals(Optional<BigDecimal> valueMaybe, double shouldEqual) {
